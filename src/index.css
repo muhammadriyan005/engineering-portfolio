@@ -1,0 +1,75 @@
+/*
+ * ══════════════════════════════════════════════════════════════════════════════
+ *  Tailwind CSS v4 — CSS-first configuration
+ *  Everything that lived in tailwind.config.js + postcss.config.js now lives
+ *  here.  The @tailwindcss/vite plugin reads this file directly.
+ * ══════════════════════════════════════════════════════════════════════════════
+ */
+
+/* 1. Pull in the full Tailwind CSS v4 layer stack */
+@import "tailwindcss";
+
+/* ─── 2. Dark Mode Strategy ───────────────────────────────────────────────────
+   v4 defaults to prefers-color-scheme. We override to use the .dark class on
+   <html> so the React toggle in App.jsx has full control.                     */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── 3. Design Tokens (@theme replaces tailwind.config.js extend) ───────────
+   Variable namespace conventions in v4:
+     --font-*         → font-family utilities  (font-sans, font-mono …)
+     --color-*        → color utilities        (bg-arch-black, text-arch-card …)
+     --max-width-*    → max-width utilities    (max-w-editorial …)            */
+@theme {
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── Architectural Dark Palette ─────────────────────────────────────────── */
+  --color-arch-black:   #0a0a0a;
+  --color-arch-card:    #111111;
+  --color-arch-border:  #1f1f1f;
+  --color-arch-divider: #262626;
+
+  /* ── Editorial Container ────────────────────────────────────────────────── */
+  --max-width-editorial: 1400px;
+}
+
+/* ─── 4. Base Layer ──────────────────────────────────────────────────────────
+   Global resets and defaults (replaces @layer base in the v3 CSS).           */
+@layer base {
+
+  /* Swiss editorial font rendering */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset for h-14 (56px) sticky header */
+    scroll-padding-top: 56px;
+  }
+
+  body {
+    /* Light: warm stone #f5f5f4  |  Dark: architectural black #0a0a0a */
+    @apply bg-[#f5f5f4] dark:bg-[#0a0a0a]
+           text-neutral-700 dark:text-neutral-300
+           font-sans antialiased min-h-screen;
+  }
+
+  /* Theme-aware text selection */
+  ::selection {
+    @apply bg-neutral-900 text-white;
+  }
+  .dark ::selection {
+    background-color: #f97316; /* orange-500 */
+    color: #0a0a0a;
+  }
+
+  /* Architectural 4px hairline scrollbar */
+  ::-webkit-scrollbar       { width: 4px; }
+  ::-webkit-scrollbar-track { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb { background: #262626; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #404040; }
+}
